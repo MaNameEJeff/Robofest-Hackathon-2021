@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 
 #Read the Image from path
-img = cv.imread("C:/Users/IB/Desktop/Test_Image.jpeg")
+img = cv.imread("Test_Image.jpeg")
 
 #Convert Image to HSV format
 img_HSV = cv.cvtColor(img, cv.COLOR_BGR2HSV)
@@ -23,8 +23,8 @@ upper_blue = np.array([174, 255, 255])
 lower_orange = np.array([4, 29, 20])
 upper_orange = np.array([25, 255, 255])
 
-lower_white = np.array([0,0,0], dtype=np.uint8)
-upper_white = np.array([0,0,229], dtype=np.uint8)
+lower_white = np.array([0,0,0])
+upper_white = np.array([0,0,229])
 
 #Set Masks
 mask1 = cv.inRange(img_HSV, lower_yellow, upper_yellow)
@@ -53,58 +53,31 @@ def getCenter(cnt):
 
 	center = {}
 
-	peri = cv.arcLength(cnt, True)
-	approx = cv.approxPolyDP(cnt, 0.02*peri, True) #Get the number of corner points
-	center["x"] = approx[0][0][0]
-	center["y"] = approx[1][0][1] - 20
+	peri = cv.arcLength(cnt, True) #Gets the perimeter of the contour.
+	approx = cv.approxPolyDP(cnt, 0.02*peri, True) #Get the corner points
+
+	width = abs(approx[0][0][0] - approx[2][0][0])
+	height = abs(approx[0][0][1] - approx[2][0][1])
+
+	center["x"] = approx[0][0][0] + int(width/4)
+	center["y"] = approx[1][0][1] - int(height/2)
 
 	return center
 
-
 #Get the squares
-yellow_boxes = getContours(mask1)
-green_boxes = getContours(mask2)
-red_boxes = getContours(mask3)
-blue_boxes = getContours(mask4)
-orange_boxes = getContours(mask5)
-white_boxes = getContours(mask6)
+yellow_boxes = {"box": getContours(mask1), "colour": "Yellow"}
+green_boxes = {"box": getContours(mask2), "colour": "Green"}
+red_boxes = {"box": getContours(mask3), "colour": "Red"}
+blue_boxes = {"box": getContours(mask4), "colour": "Blue"}
+orange_boxes = {"box": getContours(mask5), "colour": "Orange"}
+white_boxes = {"box": getContours(mask6), "colour": "White"}
 
-#For yellow squares
-for box in yellow_boxes:
+final_boxes = [yellow_boxes, green_boxes, red_boxes, blue_boxes, orange_boxes, white_boxes]
 
-	box_center = getCenter(box)
-	cv.putText(img, "Yellow", (box_center.get("x"), box_center.get("y")), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
-
-#For Green squares
-for box in green_boxes:
-
-	box_center = getCenter(box)
-	cv.putText(img, "Green", (box_center.get("x"), box_center.get("y")), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
-
-#For Red squares
-for box in red_boxes:
-
-
-	box_center = getCenter(box)
-	cv.putText(img, "Red", (box_center.get("x"), box_center.get("y")), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
-
-#For Blue squares
-for box in blue_boxes:
-
-	box_center = getCenter(box)
-	cv.putText(img, "Blue", (box_center.get("x"), box_center.get("y")), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
-
-#For Orange squares
-for box in orange_boxes:
-
-	box_center = getCenter(box)
-	cv.putText(img, "Orange", (box_center.get("x"), box_center.get("y")), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
-
-#For White squares
-for box in white_boxes:
-
-	box_center = getCenter(box)
-	cv.putText(img, "White", (box_center.get("x"), box_center.get("y")), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
+for boxes in final_boxes:
+	for box in boxes["box"]:
+		box_center = getCenter(box)
+		cv.putText(img, boxes["colour"], (box_center.get("x"), box_center.get("y")), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
 
 #Show the labelled image in a new window
 cv.imshow("New", img)
