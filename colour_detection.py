@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 
 #Read the Image from path
-img = cv.imread("C:/Users/IB/Desktop/Test_Image.jpg")
+img = cv.imread("C:/Users/IB/Desktop/Test_Image.jpeg")
 
 #Convert Image to HSV format
 img_HSV = cv.cvtColor(img, cv.COLOR_BGR2HSV)
@@ -23,12 +23,16 @@ upper_blue = np.array([174, 255, 255])
 lower_orange = np.array([4, 29, 20])
 upper_orange = np.array([25, 255, 255])
 
+lower_white = np.array([0,0,0], dtype=np.uint8)
+upper_white = np.array([0,0,229], dtype=np.uint8)
+
 #Set Masks
 mask1 = cv.inRange(img_HSV, lower_yellow, upper_yellow)
 mask2 = cv.inRange(img_HSV, lower_green, upper_green)
 mask3 = cv.inRange(img_HSV, lower_red, upper_red)
 mask4 = cv.inRange(img_HSV, lower_blue, upper_blue)
 mask5 = cv.inRange(img_HSV, lower_orange, upper_orange)
+mask6 = cv.inRange(img_HSV, lower_white, upper_white)
 
 #Get contours of a given image, here we'll be using the masks
 def getContours(img):
@@ -37,9 +41,9 @@ def getContours(img):
 	boxes = []
 
 	for cnt in contours:
-		area = cv.contourArea(cnt)
+		area = int(cv.contourArea(cnt))
 
-		if(area > 500):
+		if((area > 500) or (((area)<250) and (area>220))):
 			boxes.append(cnt)
 
 	return boxes
@@ -63,6 +67,7 @@ green_boxes = getContours(mask2)
 red_boxes = getContours(mask3)
 blue_boxes = getContours(mask4)
 orange_boxes = getContours(mask5)
+white_boxes = getContours(mask6)
 
 #For yellow squares
 for box in yellow_boxes:
@@ -79,6 +84,7 @@ for box in green_boxes:
 #For Red squares
 for box in red_boxes:
 
+
 	box_center = getCenter(box)
 	cv.putText(img, "Red", (box_center.get("x"), box_center.get("y")), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
 
@@ -94,8 +100,15 @@ for box in orange_boxes:
 	box_center = getCenter(box)
 	cv.putText(img, "Orange", (box_center.get("x"), box_center.get("y")), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
 
+#For White squares
+for box in white_boxes:
+
+	box_center = getCenter(box)
+	cv.putText(img, "White", (box_center.get("x"), box_center.get("y")), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
+
 #Show the labelled image in a new window
 cv.imshow("New", img)
 
 #Delay so that output window is visible
 cv.waitKey(0)
+cv.destroyAllWindows()
