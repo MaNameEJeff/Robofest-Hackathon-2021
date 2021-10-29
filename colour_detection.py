@@ -44,6 +44,19 @@ def getContours(img):
 
 	return boxes
 
+#Get the center of a given contour of a square
+def getCenter(cnt):
+
+	center = {}
+
+	peri = cv.arcLength(cnt, True)
+	approx = cv.approxPolyDP(cnt, 0.02*peri, True) #Get the number of corner points
+	center["x"] = approx[0][0][0]
+	center["y"] = approx[1][0][1] - 20
+
+	return center
+
+
 #Get the squares
 yellow_boxes = getContours(mask1)
 green_boxes = getContours(mask2)
@@ -54,47 +67,32 @@ orange_boxes = getContours(mask5)
 #For yellow squares
 for box in yellow_boxes:
 
-	M = cv.moments(box)
-	cx = int(M["m10"]/M["m00"])  #Get Center of the box
-	cy = int(M["m01"]/M["m00"])
-
-	cv.putText(img, "Yellow", (cx-20, cy), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
+	box_center = getCenter(box)
+	cv.putText(img, "Yellow", (box_center.get("x"), box_center.get("y")), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
 
 #For Green squares
 for box in green_boxes:
 
-	M = cv.moments(box)
-	cx = int(M["m10"]/M["m00"])	#Get Center of the box
-	cy = int(M["m01"]/M["m00"])
-
-	cv.putText(img, "Green", (cx-20, cy), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
+	box_center = getCenter(box)
+	cv.putText(img, "Green", (box_center.get("x"), box_center.get("y")), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
 
 #For Red squares
 for box in red_boxes:
 
-	M = cv.moments(box)
-	cx = int(M["m10"]/M["m00"])	#Get Center of the box
-	cy = int(M["m01"]/M["m00"])
-
-	cv.putText(img, "Red", (cx-20, cy), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
+	box_center = getCenter(box)
+	cv.putText(img, "Red", (box_center.get("x"), box_center.get("y")), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
 
 #For Blue squares
 for box in blue_boxes:
 
-	M = cv.moments(box)
-	cx = int(M["m10"]/M["m00"])	#Get Center of the box
-	cy = int(M["m01"]/M["m00"])
-
-	cv.putText(img, "Blue", (cx-20, cy), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
+	box_center = getCenter(box)
+	cv.putText(img, "Blue", (box_center.get("x"), box_center.get("y")), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
 
 #For Orange squares
 for box in orange_boxes:
 
-	M = cv.moments(box)
-	cx = int(M["m10"]/M["m00"]) #Get Center of the contour
-	cy = int(M["m01"]/M["m00"])
-
-	cv.putText(img, "Orange", (cx-20, cy), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
+	box_center = getCenter(box)
+	cv.putText(img, "Orange", (box_center.get("x"), box_center.get("y")), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
 
 #Show the labelled image in a new window
 cv.imshow("New", img)
