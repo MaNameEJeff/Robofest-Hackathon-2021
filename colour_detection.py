@@ -30,70 +30,71 @@ mask3 = cv.inRange(img_HSV, lower_red, upper_red)
 mask4 = cv.inRange(img_HSV, lower_blue, upper_blue)
 mask5 = cv.inRange(img_HSV, lower_orange, upper_orange)
 
-#Get Mask contours
-contours1 = (cv.findContours(mask1, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE))[0]
-contours2 = (cv.findContours(mask2, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE))[0]
-contours3 = (cv.findContours(mask3, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE))[0]
-contours4 = (cv.findContours(mask4, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE))[0]
-contours5 = (cv.findContours(mask5, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE))[0]
+#Get contours of a given image, here we'll be using the masks
+def getContours(img):
 
+	contours, hierarchy = cv.findContours(img, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
+	boxes = []
 
-#If any contour has an area of greater than 500 pixels, get the center of the contour and set label
+	for cnt in contours:
+		area = cv.contourArea(cnt)
+
+		if(area > 500):
+			boxes.append(cnt)
+
+	return boxes
+
+#Get the squares
+yellow_boxes = getContours(mask1)
+green_boxes = getContours(mask2)
+red_boxes = getContours(mask3)
+blue_boxes = getContours(mask4)
+orange_boxes = getContours(mask5)
 
 #For yellow squares
-for cnt in contours1:
-	area1 = cv.contourArea(cnt)
+for box in yellow_boxes:
 
-	if (area1 > 500) :
-		M = cv.moments(cnt)
-		cx = int(M["m10"]/M["m00"])  #Get Center of the contour
-		cy = int(M["m01"]/M["m00"])
+	M = cv.moments(box)
+	cx = int(M["m10"]/M["m00"])  #Get Center of the box
+	cy = int(M["m01"]/M["m00"])
 
-		cv.putText(img, "Yellow", (cx-20, cy), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
+	cv.putText(img, "Yellow", (cx-20, cy), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
 
 #For Green squares
-for cnt in contours2:
-	area2 = cv.contourArea(cnt)
+for box in green_boxes:
 
-	if (area2 > 500) :
-		M = cv.moments(cnt)
-		cx = int(M["m10"]/M["m00"])	#Get Center of the contour
-		cy = int(M["m01"]/M["m00"])
+	M = cv.moments(box)
+	cx = int(M["m10"]/M["m00"])	#Get Center of the box
+	cy = int(M["m01"]/M["m00"])
 
-		cv.putText(img, "Green", (cx-20, cy), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
+	cv.putText(img, "Green", (cx-20, cy), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
 
 #For Red squares
-for cnt in contours3:
-	area3 = cv.contourArea(cnt)
+for box in red_boxes:
 
-	if (area3 > 500) :
-		M = cv.moments(cnt)
-		cx = int(M["m10"]/M["m00"])	#Get Center of the contour
-		cy = int(M["m01"]/M["m00"])
+	M = cv.moments(box)
+	cx = int(M["m10"]/M["m00"])	#Get Center of the box
+	cy = int(M["m01"]/M["m00"])
 
-		cv.putText(img, "Red", (cx-20, cy), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
+	cv.putText(img, "Red", (cx-20, cy), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
 
 #For Blue squares
-for cnt in contours4:
-	area4 = cv.contourArea(cnt)
+for box in blue_boxes:
 
-	if (area4 > 500) :
-		M = cv.moments(cnt)
-		cx = int(M["m10"]/M["m00"])	#Get Center of the contour
-		cy = int(M["m01"]/M["m00"])
+	M = cv.moments(box)
+	cx = int(M["m10"]/M["m00"])	#Get Center of the box
+	cy = int(M["m01"]/M["m00"])
 
-		cv.putText(img, "Blue", (cx-20, cy), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
+	cv.putText(img, "Blue", (cx-20, cy), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
 
 #For Orange squares
-for cnt in contours5:
-	area5 = cv.contourArea(cnt)
+for box in orange_boxes:
 
-	if (area5 > 500) :
-		M = cv.moments(cnt)
-		cx = int(M["m10"]/M["m00"]) #Get Center of the contour
-		cy = int(M["m01"]/M["m00"])
+	M = cv.moments(box)
+	cx = int(M["m10"]/M["m00"]) #Get Center of the contour
+	cy = int(M["m01"]/M["m00"])
 
-		cv.putText(img, "Orange", (cx-20, cy), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
+	cv.putText(img, "Orange", (cx-20, cy), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
 
 #Show the labelled image in a new window
 cv.imshow("New", img)
