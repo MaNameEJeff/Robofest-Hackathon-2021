@@ -59,7 +59,7 @@ def getCenter(cnt):
 	width = abs(approx[0][0][0] - approx[2][0][0])
 	height = abs(approx[0][0][1] - approx[2][0][1])
 
-	center["x"] = approx[0][0][0] + int(width/4)
+	center["x"] = approx[0][0][0] + int(width/3)
 	center["y"] = approx[1][0][1] - int(height/2)
 
 	return center
@@ -77,7 +77,7 @@ final_boxes = [yellow_boxes, green_boxes, red_boxes, blue_boxes, orange_boxes, w
 for boxes in final_boxes:
 	for box in boxes["box"]:
 		box_center = getCenter(box)
-		cv.putText(img, boxes["colour"], (box_center.get("x"), box_center.get("y")), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
+		cv.putText(img, boxes["colour"], (box_center["x"], box_center["y"]), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0))
 
 #Show the labelled image in a new window
 cv.imshow("New", img)
