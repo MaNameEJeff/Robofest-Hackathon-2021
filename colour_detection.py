@@ -2,9 +2,11 @@ import cv2 as cv
 import numpy as np
 
 #Read the Image from path
-path = 'D:/Saranga/Update/Robofest-Hackathon-2021/Test_Image.jpg' #Update the path variable with the path of the image
+path = 'Test_Image.jpg' #Update the path variable with the path of the image
 img = cv.imread(path)
-img = cv.resize(img, (0,0), fx=2, fy=2)
+
+#Resize the Image
+img = cv.resize(img, (0,0), fx=5, fy=5)
 
 #Convert Image to HSV format
 img_HSV = cv.cvtColor(img, cv.COLOR_BGR2HSV)
@@ -58,15 +60,17 @@ def getCenter(cnt):
 	peri = cv.arcLength(cnt, True) #Gets the perimeter of the contour.
 	approx = cv.approxPolyDP(cnt, 0.02*peri, True) #Get the corner points
 
+	#Get the height and width of the square detected
 	width = abs(approx[0][0][0] - approx[1][0][0])
 	height = abs(approx[0][0][1] - approx[1][0][1])
 
+	#Get the x and y coordinate of where the text has to print relative to the square
 	center["x"] = approx[0][0][0] + int(width/3)
 	center["y"] = approx[1][0][1] - int(height/2)
 
 	return center
 
-#Get the squares
+#Get the squares and their respective colours
 yellow_boxes = {"box": getContours(mask1), "colour": "Yellow"}
 green_boxes = {"box": getContours(mask2), "colour": "Green"}
 red_boxes = {"box": getContours(mask3), "colour": "Red"}
@@ -76,6 +80,7 @@ white_boxes = {"box": getContours(mask6), "colour": "White"}
 
 final_boxes = [yellow_boxes, green_boxes, red_boxes, blue_boxes, orange_boxes, white_boxes]
 
+#Loop over the boxes and label them respectively
 for boxes in final_boxes:
 	for box in boxes["box"]:
 		box_center = getCenter(box)
