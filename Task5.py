@@ -52,7 +52,7 @@ def readData():    #To retrieve data from ThingSpeak
             e_id = i['entry_id']    #Entry ID
             t = i['field1']         #Temperature (field 1)
             h = i['field2']         #Humidity (field 2)
-            l = i['field2']         #Light Intensity (field 3)
+            l = i['field3']         #Light Intensity (field 3)
             print("|", str(e_id), " "*(len("ENTRY NO.") - len(str(e_id)) + 1), "|", str(t), " "*(len(headers['field1']) - len(str(t)) - 1), "|", str(h), " "*(len(headers['field2']) - len(str(h))), "|", str(l), " "*(len(headers['field3']) - len(str(l)) - 1), "|")
         
     else:              #To view any particular value
